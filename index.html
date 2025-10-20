@@ -160,6 +160,139 @@
                 font-size: 20px;
             }
         }
+
+        #music-player {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            z-index: 200;
+            background: rgba(10, 0, 12, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glow-color);
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px var(--glow-color);
+            transition: all 0.3s ease;
+            width: auto;
+            max-width: 480px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            flex-shrink: 0;
+        }
+
+        .control-btn {
+            background: rgba(255, 71, 168, 0.2);
+            border: 1px solid rgba(255, 71, 168, 0.4);
+            color: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 71, 168, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 71, 168, 0.3);
+        }
+
+        .control-btn.play-pause {
+            width: 44px;
+            height: 44px;
+            font-size: 1.3em;
+            background: var(--heart-color);
+            border: 1px solid var(--heart-color);
+        }
+
+
+
+        .music-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+
+        /* top music-controls removed (no toggle) */
+
+        .music-label {
+            color: white;
+            font-size: 0.85em;
+            text-shadow: 0 0 5px var(--glow-color);
+            flex: 1;
+            font-weight: 500;
+        }
+
+        /* removed toggle button styles (player shows by default) */
+
+        @media (max-width: 768px) {
+            #music-player {
+                bottom: 10px;
+                right: 10px;
+                padding: 8px;
+            }
+
+            .player-controls {
+                gap: 6px;
+            }
+
+            .control-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1em;
+            }
+
+            .control-btn.play-pause {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #music-player {
+                bottom: 8px;
+                right: 8px;
+                padding: 6px;
+            }
+
+            .control-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9em;
+            }
+
+            .control-btn.play-pause {
+                width: 36px;
+                height: 36px;
+                font-size: 1.1em;
+            }
+        }
         
     </style>
 </head>
@@ -179,6 +312,25 @@
         <canvas id="heart-canvas"></canvas>
     </div>
 
+    <div id="music-player">
+        <div class="music-controls">
+            <span class="music-label">🎵 Nhạc nì</span>
+        </div>
+        <div class="player-controls">
+            <button class="control-btn" id="prev-btn" title="Bài trước">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-skip-back-icon lucide-skip-back"><path d="M17.971 4.285A2 2 0 0 1 21 6v12a2 2 0 0 1-3.029 1.715l-9.997-5.998a2 2 0 0 1-.003-3.432z"/><path d="M3 20V4"/></svg>
+            </button>
+            <button class="control-btn play-pause" id="play-pause-btn" title="Phát/Tạm dừng">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play-icon lucide-play"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></svg>
+            </button>
+            <button class="control-btn" id="next-btn" title="Bài tiếp">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-skip-forward-icon lucide-skip-forward"><path d="M21 4v16"/><path d="M6.029 4.285A2 2 0 0 0 3 6v12a2 2 0 0 0 3.029 1.715l9.997-5.998a2 2 0 0 0 .003-3.432z"/></svg>
+            </button>
+        </div>
+
+        <audio id="audio-player"></audio>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             createStars(100);
@@ -193,7 +345,66 @@
                     startAnimation();
                 }
             });
+
+            initMusicPlayer();
         });
+
+        function initMusicPlayer() {
+            const musicPlayer = document.getElementById('music-player');
+            const audio = document.getElementById('audio-player');
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+
+            let currentSongIndex = 0;
+
+            const playlist = [
+                { title: 'Đâu ai dám hứa', file: 'music.mp3' },
+                { title: 'Nơi này có anh', file: 'music2.mp3' }
+            ];
+
+            loadSong(currentSongIndex);
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            
+            function togglePlayPause() {
+                if (audio.paused) {
+                    audio.play().then(() => {
+                        playPauseBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pause-icon lucide-pause"><rect x="14" y="3" width="5" height="18" rx="1"/><rect x="5" y="3" width="5" height="18" rx="1"/></svg>';
+                    }).catch(err => console.log('Playback prevented:', err));
+                } else {
+                    audio.pause();
+                    playPauseBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play-icon lucide-play"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></svg>';
+                }
+            }
+
+            prevBtn.addEventListener('click', () => {
+                currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
+                loadSong(currentSongIndex);
+                audio.play();
+            });
+
+            nextBtn.addEventListener('click', () => {
+                currentSongIndex = (currentSongIndex + 1) % playlist.length;
+                loadSong(currentSongIndex);
+                audio.play();
+            });
+
+            audio.addEventListener('ended', () => {
+                currentSongIndex = (currentSongIndex + 1) % playlist.length;
+                loadSong(currentSongIndex);
+                audio.play();
+            });
+
+
+
+            function loadSong(index) {
+                const song = playlist[index];
+                audio.src = song.file;
+                
+                playPauseBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play-icon lucide-play"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></svg>';
+            }
+
+        }
 
         function startAnimation() {
             let recipientName = document.getElementById('name-input').value.trim() || "bạn hiền";
