@@ -14,79 +14,40 @@
             background: #0f0011;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            perspective: 1000px;
+            perspective: 1000px; /* Vẫn giữ perspective cho hiệu ứng 3D tổng thể */
         }
 
-        /* --- Màn hình nhập tên --- */
+        /* --- Màn hình nhập tên (giữ nguyên) --- */
         #welcome-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
             background: #0f0011;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            transition: opacity 1.5s ease-out;
-            flex-direction: column; /* Sắp xếp các item theo chiều dọc */
+            display: flex; justify-content: center; align-items: center;
+            z-index: 100; transition: opacity 1.5s ease-out;
+            flex-direction: column;
         }
-
-        #welcome-overlay.hidden {
-            opacity: 0;
-            pointer-events: none; /* Cho phép click xuyên qua khi đã ẩn */
-        }
-
-        .input-container {
-            text-align: center;
-            color: white;
-        }
-
+        #welcome-overlay.hidden { opacity: 0; pointer-events: none; }
+        .input-container { text-align: center; color: white; }
         .input-container h2 {
-            font-size: 2em;
-            text-shadow: 0 0 10px #f7a7ff;
-            margin-bottom: 25px;
+            font-size: 2em; text-shadow: 0 0 10px #f7a7ff; margin-bottom: 25px;
         }
-
         #name-input {
-            padding: 12px 20px;
-            font-size: 1.2em;
-            border-radius: 25px;
-            border: 2px solid #f7a7ff;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            text-align: center;
-            outline: none;
-            transition: box-shadow 0.3s;
+            padding: 12px 20px; font-size: 1.2em; border-radius: 25px;
+            border: 2px solid #f7a7ff; background: rgba(255, 255, 255, 0.1);
+            color: white; text-align: center; outline: none; transition: box-shadow 0.3s;
         }
-        
-        #name-input:focus {
-            box-shadow: 0 0 15px #f7a7ff;
-        }
-
+        #name-input:focus { box-shadow: 0 0 15px #f7a7ff; }
         #submit-btn {
-            padding: 12px 30px;
-            font-size: 1.2em;
-            margin-top: 20px;
-            border-radius: 25px;
-            border: none;
-            background: #ff4757;
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
+            padding: 12px 30px; font-size: 1.2em; margin-top: 20px;
+            border-radius: 25px; border: none; background: #ff4757;
+            color: white; cursor: pointer; font-weight: bold;
             transition: transform 0.2s, background 0.3s;
         }
+        #submit-btn:hover { transform: scale(1.05); background: #ff6b81; }
 
-        #submit-btn:hover {
-            transform: scale(1.05);
-            background: #ff6b81;
-        }
-
-        /* --- Các style hiệu ứng (giữ nguyên) --- */
+        /* --- Cảnh 3D chính (giữ nguyên) --- */
         .scene {
-            position: relative;
-            width: 400px; height: 400px;
+            position: relative; width: 400px; height: 400px;
             transform-style: preserve-3d;
             transform: rotateX(-15deg) rotateY(0deg);
             animation: rotate-scene 40s linear infinite;
@@ -95,43 +56,72 @@
             from { transform: rotateX(-15deg) rotateY(0deg); }
             to { transform: rotateX(-15deg) rotateY(360deg); }
         }
-        .heart-3d-container {
-            position: absolute; top: 50%; left: 50%;
-            width: 100px; height: 100px;
-            transform-style: preserve-3d;
-            transform: translate(-50%, -50%) rotateX(90deg);
-            animation: pulse-heart 2s infinite ease-in-out;
+
+        /* --- Trái tim MỚI: Đầy đặn hơn, phập phồng như thật --- */
+        .heart-solid {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120px; /* Lớn hơn một chút */
+            height: 120px;
+            background: linear-gradient(135deg, #ff4d4d, #ff1a1a); /* Gradient cho cảm giác sâu hơn */
+            transform: translate(-50%, -50%) rotate(-45deg); /* Để có hình trái tim */
+            box-shadow: 0 0 30px #ff4d4d, 0 0 60px #ff1a1a;
+            /* Animation phập phồng (mạnh hơn một chút) */
+            animation: pulse-real-heart 1.5s ease-in-out infinite;
+            z-index: 10; /* Đảm bảo nằm trên các lời chúc */
         }
-        .heart-face {
-            position: absolute; width: 100px; height: 100px;
-            background: radial-gradient(circle, #ff6b81, #ff4757);
-            box-shadow: 0 0 20px #ff4757;
-            clip-path: path('M50 95.32C22.49 71.86 0 51.05 0 30.23 0 13.54 13.54 0 30.23 0 40.83 0 50 8.84 50 8.84S59.17 0 69.77 0C86.46 0 100 13.54 100 30.23c0 20.82-22.49 41.63-50 65.09z');
+        .heart-solid::before,
+        .heart-solid::after {
+            content: '';
+            width: 120px; height: 120px;
+            background: linear-gradient(135deg, #ff4d4d, #ff1a1a);
+            border-radius: 50%;
+            position: absolute;
         }
-        .heart-face:nth-child(1) { transform: rotateY(0deg) translateZ(5px); }
-        .heart-face:nth-child(2) { transform: rotateY(60deg) translateZ(5px); }
-        .heart-face:nth-child(3) { transform: rotateY(120deg) translateZ(5px); }
-        .heart-face:nth-child(4) { transform: rotateY(180deg) translateZ(5px); }
-        .heart-face:nth-child(5) { transform: rotateY(240deg) translateZ(5px); }
-        .heart-face:nth-child(6) { transform: rotateY(300deg) translateZ(5px); }
-        @keyframes pulse-heart {
-            0%, 100% { transform: translate(-50%, -50%) rotateX(90deg) scale(1); }
-            50% { transform: translate(-50%, -50%) rotateX(90deg) scale(1.1); }
+        .heart-solid::before { top: -60px; left: 0; }
+        .heart-solid::after { top: 0; left: 60px; }
+
+        @keyframes pulse-real-heart {
+            0% { transform: translate(-50%, -50%) rotate(-45deg) scale(1); box-shadow: 0 0 30px #ff4d4d, 0 0 60px #ff1a1a; }
+            50% { transform: translate(-50%, -50%) rotate(-45deg) scale(1.1); box-shadow: 0 0 45px #ff4d4d, 0 0 90px #ff1a1a; }
+            100% { transform: translate(-50%, -50%) rotate(-45deg) scale(1); box-shadow: 0 0 30px #ff4d4d, 0 0 60px #ff1a1a; }
         }
+
+        /* --- Lời chúc MỚI: Xếp hàng ngang và xoay quanh --- */
         .wishes-ring {
-            position: absolute; top: 50%; left: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
             width: 0; height: 0;
             transform-style: preserve-3d;
-            font-size: 18px; font-weight: bold; color: #fff;
+            font-size: 16px; /* Giảm cỡ chữ để tránh bị tràn */
+            font-weight: bold;
+            color: #fff;
             text-shadow: 0 0 5px #f7a7ff, 0 0 10px #f7a7ff;
         }
-        .wishes-ring span { position: absolute; transform-origin: 0 0; }
+        .wishes-ring .wish-item {
+            position: absolute;
+            transform-origin: 0 0;
+            white-space: nowrap; /* Giữ chữ trên một hàng */
+            padding: 5px 10px; /* Thêm padding cho dễ nhìn */
+            background: rgba(0, 0, 0, 0.3); /* Nền mờ cho chữ */
+            border-radius: 15px; /* Bo tròn góc */
+            backdrop-filter: blur(3px); /* Hiệu ứng blur */
+            display: inline-block; /* Để padding và border-radius hoạt động */
+        }
+
+        /* Các tầng khác nhau */
         #ring1 { animation: rotate-ring 25s linear infinite; }
         #ring2 { animation: rotate-ring 20s linear infinite reverse; }
         #ring3 { animation: rotate-ring 30s linear infinite; }
+
         @keyframes rotate-ring {
-            from { transform: rotateY(0deg); } to { transform: rotateY(360deg); }
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
         }
+
+        /* --- Trái tim bay (giữ nguyên) --- */
         .flying-heart {
             position: fixed; bottom: -50px; font-size: 20px;
             color: #ff8080; animation: fly 10s linear infinite;
@@ -154,11 +144,8 @@
     </div>
 
     <div class="scene">
-        <div class="heart-3d-container">
-            <div class="heart-face"></div><div class="heart-face"></div>
-            <div class="heart-face"></div><div class="heart-face"></div>
-            <div class="heart-face"></div><div class="heart-face"></div>
-        </div>
+        <div class="heart-solid"></div>
+        
         <div class="wishes-ring" id="ring1"></div>
         <div class="wishes-ring" id="ring2"></div>
         <div class="wishes-ring" id="ring3"></div>
@@ -166,39 +153,35 @@
     <div id="hearts-container"></div>
 
     <script>
-        // Lấy các phần tử từ HTML
         const submitBtn = document.getElementById('submit-btn');
         const nameInput = document.getElementById('name-input');
         const welcomeOverlay = document.getElementById('welcome-overlay');
 
-        // Thêm sự kiện khi người dùng nhấn nút
         submitBtn.addEventListener('click', startAnimation);
-        
-        // Thêm sự kiện khi người dùng nhấn Enter trong ô input
         nameInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
-                event.preventDefault(); // Ngăn hành vi mặc định của Enter
+                event.preventDefault();
                 startAnimation();
             }
         });
 
         function startAnimation() {
-            // Lấy tên người dùng nhập, xóa khoảng trắng thừa
             let recipientName = nameInput.value.trim();
-
-            // Nếu không nhập gì, dùng tên mặc định là "bạn"
             if (recipientName === "") {
                 recipientName = "bạn";
             }
-
-            // Ẩn màn hình nhập tên
             welcomeOverlay.classList.add('hidden');
 
-            // --- Bắt đầu tạo lời chúc và hiệu ứng ---
             const getWishesLayer1 = (name) => [`Chúc ${name} 20/10 xinh đẹp`, `Mãi rạng rỡ và kiêu sa`, `Happy Women's Day, ${name}!`, `Luôn là bông hoa tuyệt vời nhất`];
             const getWishesLayer2 = (name) => [`Chúc ${name} luôn vui vẻ, hạnh phúc`, `Luôn mỉm cười và yêu đời`, `Thành công trong mọi việc`, `Keep shining brightly!`];
             const getWishesLayer3 = (name) => ["❤️", "💖", `Gửi ngàn yêu thương tới ${name}`, "❤️", "💖", "You are amazing!"];
             
+            // Xóa các lời chúc cũ trước khi tạo lại (đảm bảo không bị lặp nếu có lỗi)
+            document.getElementById('ring1').innerHTML = '';
+            document.getElementById('ring2').innerHTML = '';
+            document.getElementById('ring3').innerHTML = '';
+
+            // Tạo các tầng lời chúc với thông số khác nhau
             createWishesRing('ring1', getWishesLayer1(recipientName), 220, 0); 
             createWishesRing('ring2', getWishesLayer2(recipientName), 160, -60);
             createWishesRing('ring3', getWishesLayer3(recipientName), 190, 60);
@@ -206,18 +189,31 @@
             setInterval(createFlyingHeart, 300);
         }
 
-        // --- Các hàm tiện ích (giữ nguyên) ---
+        // Hàm tạo vòng lời chúc đã được chỉnh sửa để xếp ngang
         function createWishesRing(ringId, wishes, radius, y_offset) {
             const ring = document.getElementById(ringId);
-            const angleStep = 360 / wishes.length;
+            const numWishes = wishes.length;
+            const angleStep = 360 / numWishes;
+
             wishes.forEach((text, i) => {
-                const span = document.createElement('span');
-                span.innerText = text;
+                const wishItem = document.createElement('span');
+                wishItem.classList.add('wish-item'); // Thêm class mới để style
+                wishItem.innerText = text;
                 const angle = i * angleStep;
-                span.style.transform = `rotateY(${angle}deg) translateZ(${radius}px) translateY(${y_offset}px)`;
-                ring.appendChild(span);
+                
+                // Điều chỉnh transform để lời chúc xoay quanh và giữ nguyên chiều ngang
+                // translate(-50%, -50%) để căn giữa mỗi chữ trên trục của nó
+                wishItem.style.transform = `
+                    rotateY(${angle}deg) 
+                    translateZ(${radius}px) 
+                    translateY(${y_offset}px)
+                    translateX(-50%) translateY(-50%) rotateY(-${angle}deg) 
+                    /* rotateY(-${angle}deg) để giữ chữ luôn hướng về phía người xem */
+                `;
+                ring.appendChild(wishItem);
             });
         }
+
         function createFlyingHeart() {
             const heartsContainer = document.getElementById('hearts-container');
             const heartShapes = ['❤️', '💖', '💗', '💕'];
