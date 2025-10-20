@@ -12,8 +12,7 @@
 
         body {
             margin: 0;
-            /* Dùng 100vh có thể gây lỗi trên mobile, 100dvh (dynamic) tốt hơn */
-            height: 100dvh; 
+            height: 100dvh; /* 100dvh tốt hơn 100vh trên mobile */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -42,14 +41,14 @@
             display: flex; justify-content: center; align-items: center;
             z-index: 100; transition: opacity 1.5s ease-out; flex-direction: column;
             padding: 20px;
-            box-sizing: border-box; /* Thêm để padding không làm vỡ layout */
+            box-sizing: border-box;
         }
         #welcome-overlay.hidden { opacity: 0; pointer-events: none; }
         
         .input-container { 
             text-align: center; 
             color: white; 
-            width: 90%; /* Giới hạn chiều rộng trên mobile */
+            width: 90%;
         }
         
         .input-container h2 { 
@@ -68,9 +67,9 @@
             text-align: center; 
             outline: none; 
             transition: box-shadow 0.3s;
-            width: 90%; /* Sửa thành % để responsive */
-            max-width: 400px; /* Giới hạn chiều rộng tối đa */
-            box-sizing: border-box; /* Thêm để padding không làm vỡ layout */
+            width: 90%; 
+            max-width: 400px;
+            box-sizing: border-box;
         }
         #name-input:focus { box-shadow: 0 0 15px var(--glow-color); }
         
@@ -102,7 +101,6 @@
         #heart-canvas {
             position: absolute;
             top: 50%; left: 50%;
-            /* Transform sẽ được set bằng JS để responsive */
         }
 
         .flying-wish {
@@ -114,6 +112,7 @@
             white-space: nowrap;
             z-index: 1;
             animation: flyUp 12s linear;
+            will-change: transform, opacity; /* Tối ưu animation */
         }
 
         @keyframes flyUp {
@@ -134,10 +133,12 @@
             bottom: -50px;
             font-size: 25px;
             color: var(--heart-color);
-            animation: fly 10s linear infinite;
+            /* Bỏ 'infinite' để animation chạy 1 lần rồi JS xóa đi */
+            animation: fly 10s linear; 
             opacity: 0;
             z-index: 1;
             text-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color);
+            will-change: transform, opacity; /* Tối ưu animation */
         }
 
         @keyframes fly {
@@ -145,22 +146,20 @@
             100% { bottom: 105vh; opacity: 0; transform: translateX(var(--x-end)); }
         }
 
-        /* --- THÊM MEDIA QUERY CHO MOBILE --- */
         @media (max-width: 768px) {
             .input-container h2 {
-                font-size: 1.5em; /* Giảm cỡ chữ tiêu đề */
+                font-size: 1.5em;
             }
             #name-input, #submit-btn {
-                font-size: 1em; /* Giảm cỡ chữ input và button */
+                font-size: 1em;
             }
             .flying-wish {
-                font-size: 1em; /* Giảm cỡ chữ lời chúc */
+                font-size: 1em;
             }
             .flying-heart {
-                font-size: 20px; /* Giảm cỡ chữ icon */
+                font-size: 20px;
             }
         }
-        /* --- KẾT THÚC MEDIA QUERY --- */
         
     </style>
 </head>
@@ -242,7 +241,10 @@
             ];
             
             startFlyingWishes(wishes);
-            setInterval(createFlyingHeart, 250);
+            
+            // *** THAY ĐỔI: Giảm tần suất tạo icon ***
+            setInterval(createFlyingHeart, 800); // 800ms thay vì 250ms
+            
             initCanvasHeart();
         }
 
@@ -298,43 +300,51 @@
             heart.innerText = heartShapes[Math.floor(Math.random() * heartShapes.length)];
 
             heart.style.left = `${Math.random() * 100}vw`;
-            heart.style.animationDuration = `${8 + Math.random() * 7}s`;
-            heart.style.animationDelay = `${Math.random() * 2}s`;
+            
+            // *** THAY ĐỔI: Tính toán thời gian và xóa đi dứt điểm ***
+            const duration = 8 + Math.random() * 7;
+            const delay = Math.random() * 2;
+            
+            heart.style.animationDuration = `${duration}s`;
+            heart.style.animationDelay = `${delay}s`;
             heart.style.setProperty('--x-end', `${(Math.random() - 0.5) * 400}px`);
             
             heartsContainer.appendChild(heart);
-            setTimeout(() => heart.remove(), 15000);
+            
+            // Xóa element SAU KHI animation và delay kết thúc
+            setTimeout(() => heart.remove(), (duration + delay) * 1000 + 100);
         }
 
         function initCanvasHeart() {
             const canvas = document.getElementById('heart-canvas');
             const ctx = canvas.getContext('2d');
             
-            // --- THAY ĐỔI TRONG HÀM NÀY ---
-            const size = 600; // Giữ nguyên kích thước vẽ gốc để đảm bảo độ nét
+            // --- THAY ĐỔI: Tối ưu cho mobile ---
+            const isMobile = window.innerWidth <= 768;
+            const size = isMobile ? 400 : 600; // Canvas nhỏ hơn cho mobile
+            const heartBaseScale = isMobile ? 7 : 10; // Kích thước tim nhỏ hơn
+            const shadowBlur1 = isMobile ? 30 : 60; // Đổ bóng nhẹ hơn
+            const shadowBlur2 = isMobile ? 10 : 20; // Đổ bóng nhẹ hơn
+
             canvas.width = size; 
             canvas.height = size;
             
-            // Tính toán scale factor
-            // Lấy 80% chiều cao hoặc 90% chiều rộng màn hình (lấy giá trị nhỏ hơn)
-            // và không bao giờ scale lớn hơn 1 (kích thước gốc)
             const scaleFactor = Math.min(
                 window.innerHeight * 0.8 / size, 
                 window.innerWidth * 0.9 / size, 
                 1
             );
             
-            // Áp dụng scale vào transform
             canvas.style.transform = `translate(-50%, -50%) scale(${scaleFactor})`;
             // --- KẾT THÚC THAY ĐỔI ---
 
             let animationFrame;
 
             function pointOnHeart(t) {
-                const heartScale = 10; 
+                // Sử dụng heartBaseScale đã được tối ưu
                 const x = 16 * Math.pow(Math.sin(t), 3);
                 const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-                return { x: x * heartScale, y: y * heartScale };
+                return { x: x * heartBaseScale, y: y * heartBaseScale };
             }
 
             function animate() {
@@ -351,12 +361,16 @@
                 }
                 path.closePath();
                 ctx.shadowColor = 'rgba(255, 71, 168, 1)';
-                ctx.shadowBlur = 60;
+                
+                // Sử dụng giá trị đổ bóng đã được tối ưu
+                ctx.shadowBlur = shadowBlur1;
                 ctx.fillStyle = 'rgba(255, 71, 87, 1)';
                 ctx.fill(path);
-                ctx.shadowBlur = 20;
+                
+                ctx.shadowBlur = shadowBlur2;
                 ctx.fillStyle = 'rgba(255, 100, 150, 1)';
                 ctx.fill(path);
+                
                 ctx.restore();
                 animationFrame = requestAnimationFrame(animate);
             }
