@@ -14,7 +14,7 @@
             background: #0f0011;
             overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            perspective: 1000px; /* Vẫn giữ perspective cho hiệu ứng 3D tổng thể */
+            perspective: 1000px;
         }
 
         /* --- Màn hình nhập tên (giữ nguyên) --- */
@@ -57,19 +57,16 @@
             to { transform: rotateX(-15deg) rotateY(360deg); }
         }
 
-        /* --- Trái tim MỚI: Đầy đặn hơn, phập phồng như thật --- */
+        /* --- Trái tim đầy đặn (giữ nguyên) --- */
         .heart-solid {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 120px; /* Lớn hơn một chút */
-            height: 120px;
-            background: linear-gradient(135deg, #ff4d4d, #ff1a1a); /* Gradient cho cảm giác sâu hơn */
-            transform: translate(-50%, -50%) rotate(-45deg); /* Để có hình trái tim */
+            top: 50%; left: 50%;
+            width: 120px; height: 120px;
+            background: linear-gradient(135deg, #ff4d4d, #ff1a1a);
+            transform: translate(-50%, -50%) rotate(-45deg);
             box-shadow: 0 0 30px #ff4d4d, 0 0 60px #ff1a1a;
-            /* Animation phập phồng (mạnh hơn một chút) */
             animation: pulse-real-heart 1.5s ease-in-out infinite;
-            z-index: 10; /* Đảm bảo nằm trên các lời chúc */
+            z-index: 10;
         }
         .heart-solid::before,
         .heart-solid::after {
@@ -81,44 +78,35 @@
         }
         .heart-solid::before { top: -60px; left: 0; }
         .heart-solid::after { top: 0; left: 60px; }
-
         @keyframes pulse-real-heart {
             0% { transform: translate(-50%, -50%) rotate(-45deg) scale(1); box-shadow: 0 0 30px #ff4d4d, 0 0 60px #ff1a1a; }
             50% { transform: translate(-50%, -50%) rotate(-45deg) scale(1.1); box-shadow: 0 0 45px #ff4d4d, 0 0 90px #ff1a1a; }
             100% { transform: translate(-50%, -50%) rotate(-45deg) scale(1); box-shadow: 0 0 30px #ff4d4d, 0 0 60px #ff1a1a; }
         }
 
-        /* --- Lời chúc MỚI: Xếp hàng ngang và xoay quanh --- */
+        /* --- Lời chúc xếp hàng ngang (giữ nguyên) --- */
         .wishes-ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
+            position: absolute; top: 50%; left: 50%;
             width: 0; height: 0;
             transform-style: preserve-3d;
-            font-size: 16px; /* Giảm cỡ chữ để tránh bị tràn */
-            font-weight: bold;
-            color: #fff;
+            font-size: 16px; font-weight: bold; color: #fff;
             text-shadow: 0 0 5px #f7a7ff, 0 0 10px #f7a7ff;
         }
         .wishes-ring .wish-item {
             position: absolute;
             transform-origin: 0 0;
-            white-space: nowrap; /* Giữ chữ trên một hàng */
-            padding: 5px 10px; /* Thêm padding cho dễ nhìn */
-            background: rgba(0, 0, 0, 0.3); /* Nền mờ cho chữ */
-            border-radius: 15px; /* Bo tròn góc */
-            backdrop-filter: blur(3px); /* Hiệu ứng blur */
-            display: inline-block; /* Để padding và border-radius hoạt động */
+            white-space: nowrap;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(3px);
+            display: inline-block;
         }
-
-        /* Các tầng khác nhau */
-        #ring1 { animation: rotate-ring 25s linear infinite; }
-        #ring2 { animation: rotate-ring 20s linear infinite reverse; }
-        #ring3 { animation: rotate-ring 30s linear infinite; }
-
+        #ring1 { animation: rotate-ring 35s linear infinite; } /* Chỉnh tốc độ xoay chậm lại một chút */
+        #ring2 { animation: rotate-ring 30s linear infinite reverse; }
+        #ring3 { animation: rotate-ring 40s linear infinite; }
         @keyframes rotate-ring {
-            from { transform: rotateY(0deg); }
-            to { transform: rotateY(360deg); }
+            from { transform: rotateY(0deg); } to { transform: rotateY(360deg); }
         }
 
         /* --- Trái tim bay (giữ nguyên) --- */
@@ -145,7 +133,6 @@
 
     <div class="scene">
         <div class="heart-solid"></div>
-        
         <div class="wishes-ring" id="ring1"></div>
         <div class="wishes-ring" id="ring2"></div>
         <div class="wishes-ring" id="ring3"></div>
@@ -172,51 +159,57 @@
             }
             welcomeOverlay.classList.add('hidden');
 
-            const getWishesLayer1 = (name) => [`Chúc ${name} 20/10 xinh đẹp`, `Mãi rạng rỡ và kiêu sa`, `Happy Women's Day, ${name}!`, `Luôn là bông hoa tuyệt vời nhất`];
-            const getWishesLayer2 = (name) => [`Chúc ${name} luôn vui vẻ, hạnh phúc`, `Luôn mỉm cười và yêu đời`, `Thành công trong mọi việc`, `Keep shining brightly!`];
-            const getWishesLayer3 = (name) => ["❤️", "💖", `Gửi ngàn yêu thương tới ${name}`, "❤️", "💖", "You are amazing!"];
+            // === CẬP NHẬT: THÊM NHIỀU LỜI CHÚC HƠN ===
+            const getWishesLayer1 = (name) => [
+                `Chúc ${name} 20/10 thật xinh đẹp`, `Mãi rạng rỡ và kiêu sa`,
+                `Happy Women's Day, ${name}!`, `Luôn là bông hoa tuyệt vời nhất`,
+                `Chúc ${name} một ngày ngập tràn niềm vui`, `Wish you all the best!`
+            ];
+            const getWishesLayer2 = (name) => [
+                `Chúc ${name} luôn vui vẻ, hạnh phúc`, `Luôn mỉm cười và yêu đời`,
+                `Thành công trong mọi việc`, `Keep shining brightly!`,
+                `Mong mọi điều tốt đẹp sẽ đến với ${name}`, `You deserve the best!`
+            ];
+            const getWishesLayer3 = (name) => [
+                "❤️", "💖", `Gửi ngàn yêu thương tới ${name}`, "❤️", "💖",
+                "You are amazing!", "Luôn là chính mình nhé", "Stay beautiful!"
+            ];
             
-            // Xóa các lời chúc cũ trước khi tạo lại (đảm bảo không bị lặp nếu có lỗi)
             document.getElementById('ring1').innerHTML = '';
             document.getElementById('ring2').innerHTML = '';
             document.getElementById('ring3').innerHTML = '';
 
-            // Tạo các tầng lời chúc với thông số khác nhau
             createWishesRing('ring1', getWishesLayer1(recipientName), 220, 0); 
             createWishesRing('ring2', getWishesLayer2(recipientName), 160, -60);
             createWishesRing('ring3', getWishesLayer3(recipientName), 190, 60);
 
-            setInterval(createFlyingHeart, 300);
+            // === CẬP NHẬT: TĂNG TẦN SUẤT TRÁI TIM BAY ===
+            // Thay đổi từ 300ms thành 150ms để tạo nhiều trái tim hơn
+            setInterval(createFlyingHeart, 150);
         }
 
-        // Hàm tạo vòng lời chúc đã được chỉnh sửa để xếp ngang
+        // --- Các hàm tiện ích (giữ nguyên) ---
         function createWishesRing(ringId, wishes, radius, y_offset) {
             const ring = document.getElementById(ringId);
             const numWishes = wishes.length;
             const angleStep = 360 / numWishes;
-
             wishes.forEach((text, i) => {
                 const wishItem = document.createElement('span');
-                wishItem.classList.add('wish-item'); // Thêm class mới để style
+                wishItem.classList.add('wish-item');
                 wishItem.innerText = text;
                 const angle = i * angleStep;
-                
-                // Điều chỉnh transform để lời chúc xoay quanh và giữ nguyên chiều ngang
-                // translate(-50%, -50%) để căn giữa mỗi chữ trên trục của nó
                 wishItem.style.transform = `
                     rotateY(${angle}deg) 
                     translateZ(${radius}px) 
                     translateY(${y_offset}px)
                     translateX(-50%) translateY(-50%) rotateY(-${angle}deg) 
-                    /* rotateY(-${angle}deg) để giữ chữ luôn hướng về phía người xem */
                 `;
                 ring.appendChild(wishItem);
             });
         }
-
         function createFlyingHeart() {
             const heartsContainer = document.getElementById('hearts-container');
-            const heartShapes = ['❤️', '💖', '💗', '💕'];
+            const heartShapes = ['❤️', '💖', '💗', '💕', '💓', '💝'];
             const heart = document.createElement('div');
             heart.classList.add('flying-heart');
             heart.innerText = heartShapes[Math.floor(Math.random() * heartShapes.length)];
