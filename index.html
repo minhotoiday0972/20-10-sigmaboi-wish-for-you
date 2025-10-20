@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng 20/10</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #1a001a;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Hành tinh Trái tim */
+        .heart-planet {
+            width: 150px;
+            height: 150px;
+            background: #ff4d4d;
+            position: relative;
+            transform: rotate(-45deg);
+            animation: pulse 1.5s ease-in-out infinite;
+            box-shadow: 0 0 30px #ff4d4d, 0 0 60px #ff1a1a;
+        }
+
+        .heart-planet::before,
+        .heart-planet::after {
+            content: '';
+            width: 150px;
+            height: 150px;
+            background: #ff4d4d;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .heart-planet::before {
+            top: -75px;
+            left: 0;
+        }
+
+        .heart-planet::after {
+            top: 0;
+            left: 75px;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1) rotate(-45deg);
+            }
+            50% {
+                transform: scale(1.1) rotate(-45deg);
+            }
+        }
+
+        /* Lời chúc chạy xung quanh */
+        .wishes-text {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            color: #fff;
+            font-size: 16px;
+            animation: rotate-text 20s linear infinite;
+            font-weight: bold;
+            text-shadow: 0 0 5px #fff;
+        }
+
+        .wishes-text span {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: 0 150px; /* Bán kính quỹ đạo */
+        }
+        
+        @keyframes rotate-text {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Trái tim bay */
+        .flying-heart {
+            position: absolute;
+            bottom: -50px;
+            font-size: 20px;
+            color: #ff8080;
+            animation: fly 10s linear infinite;
+            opacity: 0;
+            text-shadow: 0 0 10px #ff8080;
+        }
+        
+        @keyframes fly {
+            0% {
+                bottom: -50px;
+                opacity: 1;
+                transform: translateX(0);
+            }
+            100% {
+                bottom: 100vh;
+                opacity: 0;
+                transform: translateX(var(--x-end));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="hearts-container"></div>
+
+    <div class="container">
+        <div class="heart-planet"></div>
+        
+        <div class="wishes-text" id="wishes"></div>
+    </div>
+
+    <script>
+        // Tạo các lời chúc chạy quanh
+        const wishesContainer = document.getElementById('wishes');
+        const wishes = [
+            "Chúc bạn 20/10 luôn xinh đẹp!", 
+            "Mãi vui vẻ và hạnh phúc nhé!",
+            "Luôn rạng rỡ như những đóa hoa!",
+            "Chúc bạn một ngày thật ý nghĩa!",
+            "Luôn thành công và may mắn!",
+            "You are the best!",
+        ];
+        const angleStep = 360 / wishes.length;
+
+        wishes.forEach((wish, index) => {
+            const span = document.createElement('span');
+            span.innerText = wish;
+            span.style.transform = `rotate(${index * angleStep}deg)`;
+            wishesContainer.appendChild(span);
+        });
+
+        // Tạo các trái tim bay ngẫu nhiên
+        const heartsContainer = document.getElementById('hearts-container');
+        const heartShapes = ['❤️', '💖', '💗', '💕'];
+        
+        function createFlyingHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('flying-heart');
+            heart.innerText = heartShapes[Math.floor(Math.random() * heartShapes.length)];
+            heart.style.left = `${Math.random() * 100}vw`;
+            heart.style.animationDuration = `${5 + Math.random() * 8}s`;
+            heart.style.fontSize = `${15 + Math.random() * 20}px`;
+            heart.style.setProperty('--x-end', `${(Math.random() - 0.5) * 200}px`);
+
+            heartsContainer.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 13000); // Xóa trái tim sau khi bay xong
+        }
+
+        setInterval(createFlyingHeart, 300); // Tạo trái tim mới mỗi 300ms
+    </script>
+</body>
+</html>
